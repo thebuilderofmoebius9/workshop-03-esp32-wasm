@@ -9,7 +9,7 @@
 #                              first malloc (which grows memory) returns NULL
 #   --strip-all                ~22KB module
 
-SHARED   = ../shared
+SHARED   = ../../shared
 CORE     = gifapp.cpp $(SHARED)/src/gifcore.cpp $(SHARED)/vendor/AnimatedGIF/AnimatedGIF.cpp
 # -fno-jump-tables: emit switch statements as if/else branch chains, NOT wasm
 # br_table. WAMR's loader rejects LLVM's -O2 br_table in stack-polymorphic
