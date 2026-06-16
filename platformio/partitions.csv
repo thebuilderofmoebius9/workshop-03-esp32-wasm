@@ -1,0 +1,23 @@
+# jc3248-pet-idf — custom partition table (8MB flash, ESP32-S3).
+#
+# WHY: step 5 adds a LittleFS image holding the bufo GIF pack. The default
+# SINGLE_APP_LARGE layout has no data partition for it, so we carve an explicit
+# table: nvs + phy_init + a 2.5MB app (factory) + a 3MB littlefs (storage).
+#
+# Sizing for 8MB (0x800000) flash:
+#   bootloader            0x0000 ..0x8000   (2nd-stage bootloader — implicit, not listed)
+#   partition table       0x8000 ..0x9000   (this CSV, compiled — implicit, not listed)
+#   nvs        0x009000   0x6000   ( 24K)  Wi-Fi calib / key-value
+#   phy_init   0x00F000   0x1000   (  4K)  RF PHY calibration data
+#   factory    0x010000   0x280000 (2.5M)  app — current bin ~254K, headroom for
+#                                           GIF decode + future audio/BLE
+#   storage    0x290000   0x300000 (3.0M)  LittleFS — bufo pack (~596K), room to grow
+#   (unused)   0x590000 ..0x800000 (2.4M)  free tail — OTA/log/second pack later
+#
+# factory offset (0x10000) is 64K-aligned as required for an app partition.
+# storage offset (0x290000) is 4K-aligned as required for a data partition.
+# Name,   Type, SubType, Offset,   Size,     Flags
+nvs,      data, nvs,     0x9000,   0x6000,
+phy_init, data, phy,     0xf000,   0x1000,
+factory,  app,  factory, 0x10000,  0x280000,
+storage,  data, littlefs,0x290000, 0x300000,

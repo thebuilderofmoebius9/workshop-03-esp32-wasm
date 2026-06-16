@@ -1,0 +1,45 @@
+# gif-wamr — ESP32-S3 (Guition JC3248W535, same board as the pet).
+
+CONFIG_IDF_TARGET="esp32s3"
+
+# This board's USB-C is the built-in USB-Serial-JTAG (no UART bridge) — route the
+# console there so `make monitor` / serial works.
+CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y
+
+# 8MB QIO flash
+CONFIG_ESPTOOLPY_FLASHSIZE_8MB=y
+CONFIG_ESPTOOLPY_FLASHMODE_QIO=y
+
+# OPI PSRAM @80MHz — the wasm linear memory (512KB->2MB) is allocated here via the
+# custom WAMR allocator (internal SRAM is far too small).
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_OCT=y
+CONFIG_SPIRAM_SPEED_80M=y
+# Integrate PSRAM into malloc: allocations > 8KB (the wasm linear memory) land in
+# PSRAM, while WAMR's small runtime structs stay in internal RAM (cache-safe).
+CONFIG_SPIRAM_USE_MALLOC=y
+CONFIG_SPIRAM_MALLOC_ALWAYSINTERNAL=8192
+CONFIG_SPIRAM_TRY_ALLOCATE_WHEN_FAILS=y
+
+# app_main calls into the WAMR interpreter — give the main task headroom.
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=16384
+
+# Larger app image (WAMR interpreter) — use a single big app partition.
+CONFIG_PARTITION_TABLE_SINGLE_APP_LARGE=y
+
+# WAMR config: our gifapp.wasm has ZERO imports (no WASI, no libc imports), so
+# disable LIBC_WASI — it also avoids WAMR's espidf_file.c, which needs POSIX
+# fstat/struct stat APIs that don't compile under ESP-IDF v6.
+CONFIG_WAMR_ENABLE_LIBC_WASI=n
+
+# zig/LLVM emits the reference-types encoding (call_indirect table index +
+# element-section format) even for a plain indirect-call table. WAMR's esp-idf
+# component leaves REF_TYPES OFF by default, so load fails with "zero byte
+# expected ... reference types feature which is disabled". Turn it on.
+CONFIG_WAMR_ENABLE_REF_TYPES=y
+
+# Use the CLASSIC interpreter, not the FAST one. The fast interp pre-computes a
+# per-function operand-offset table in a bounded space; our decoder's large
+# functions (AnimatedGIF playFrame / LZW) overflow it ("fast interpreter offset
+# overflow" at load). The classic interpreter has no such per-function limit.
+CONFIG_WAMR_INTERP_CLASSIC=y

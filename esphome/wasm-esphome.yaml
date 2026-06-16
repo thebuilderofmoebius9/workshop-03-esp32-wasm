@@ -1,0 +1,29 @@
+# ESPHome configuration for compiling WAMR on ESP32-S3 via ESP-IDF framework
+esphome:
+  name: wasm-esphome
+  friendly_name: WASM ESPHome
+  includes:
+    - wasm_esphome.h
+
+esp32:
+  board: esp32-s3-devkitc-1
+  framework:
+    type: esp-idf
+    # Add WAMR as a component directly downloaded from Espressif's component repository
+    components:
+      - name: wasm-micro-runtime
+        source:
+          type: git
+          url: https://github.com/espressif/wasm-micro-runtime.git
+          version: v2.4.0
+
+# Set up logging and USB-Serial-JTAG console
+logger:
+  hardware_uart: USB_SERIAL_JTAG
+  level: DEBUG
+
+# Configure custom WAMR component
+custom_component:
+  - lambda: |-
+      auto *wasm = new WASMRunner();
+      return {wasm};
