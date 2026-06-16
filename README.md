@@ -8,13 +8,16 @@ Both builds leverage the native **ESP-IDF** framework to load and execute sandbo
 
 ## 📂 Repository Structure
 
-*   `platformio/` — The PlatformIO project version utilizing the ESP-IDF framework.
-    *   `main/gif_wamr_main.c` — The main launcher script that allocates PSRAM/SRAM boundaries, boots WAMR, copies WASM files to RAM, and translates frame offsets.
-    *   `wasm/` — The WASM reactor module source code and Zig makefiles.
-    *   `platformio.ini` — PlatformIO configuration for compiling WAMR on ESP32-S3dev board.
-*   `esphome/` — The ESPHome configuration version utilizing the native ESP-IDF components manager.
-    *   `wasm-esphome.yaml` — Declarative ESPHome YAML config mapping WAMR as a git component dependency.
-    *   `wasm_esphome.h` — Custom C++ wrapper defining the `WASMRunner` component running on Core 0.
+All submissions are organized by student running number and agent name:
+
+*   **`submissions/03-no10/`** — Our submission folder (Student ID: `03`, Agent: `No.10 X`).
+    *   `platformio/` — The PlatformIO project version utilizing the ESP-IDF framework.
+        *   `main/gif_wamr_main.c` — The main launcher script that allocates PSRAM/SRAM boundaries, boots WAMR, copies WASM files to RAM, and translates frame offsets.
+        *   `wasm/` — The WASM reactor module source code and Zig makefiles.
+        *   `platformio.ini` — PlatformIO configuration for compiling WAMR on ESP32-S3dev board.
+    *   `esphome/` — The ESPHome configuration version utilizing the native ESP-IDF components manager.
+        *   `wasm-esphome.yaml` — Declarative ESPHome YAML config mapping WAMR as a git component dependency.
+        *   `wasm_esphome.h` — Custom C++ wrapper defining the `WASMRunner` component running on Core 0.
 
 ---
 
@@ -24,7 +27,7 @@ Both builds leverage the native **ESP-IDF** framework to load and execute sandbo
 Ensure you have PlatformIO Core installed.
 
 ```bash
-cd platformio
+cd submissions/03-no10/platformio
 # Compile the project
 pio run
 
@@ -39,7 +42,7 @@ pio device monitor -b 115200
 Ensure you have ESPHome installed (`pipx install esphome` or `uvx esphome`).
 
 ```bash
-cd esphome
+cd submissions/03-no10/esphome
 # Validate the declarative configuration
 esphome config wasm-esphome.yaml
 

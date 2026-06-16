@@ -1,0 +1,18 @@
+# Build artifacts
+platformio/.pio/
+platformio/build/
+platformio/sdkconfig
+platformio/sdkconfig.old
+platformio/managed_components/
+platformio/dependencies.lock
+
+# WASM build outputs (rebuild with make)
+# Keep pre-built browser-wasm/web/gifdec.{js,wasm} for quick demo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
